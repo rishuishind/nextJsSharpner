@@ -1,4 +1,4 @@
-import MongoClient from "mongodb/lib/mongo_client";
+import { MongoClient, ObjectId } from "mongodb";
 const showMeetup = (props) => {
 
     return <>
@@ -22,17 +22,15 @@ export async function getStaticProps(context) {
     const client = await MongoClient.connect('mongodb://rishuishind:saras123@ac-bqc4kzx-shard-00-00.mapsrxn.mongodb.net:27017,ac-bqc4kzx-shard-00-01.mapsrxn.mongodb.net:27017,ac-bqc4kzx-shard-00-02.mapsrxn.mongodb.net:27017/?ssl=true&replicaSet=atlas-1i7v8o-shard-0&authSource=admin&retryWrites=true&w=majority');
     const db = client.db();
     const meetupCollection = db.collection('meetups');
-    const meetups = await meetupCollection.find().toArray();
-    let data = meetups.find((list) => list._id.toString() === id)
-    console.log('this is data ', data);
+    const data = await meetupCollection.findOne({ _id: ObjectId(id) });
     client.close();
     return {
         props: {
             data: {
+                id: data._id.toString(),
                 title: data.title,
-                image: data.image,
                 address: data.address,
-                id: data._id.toString()
+                image: data.image
             }
         }
     }
