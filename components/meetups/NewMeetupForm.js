@@ -22,6 +22,7 @@ function NewMeetupForm(props) {
       image: enteredImage,
       address: enteredAddress,
       description: enteredDescription,
+      id: 'm2'
     };
 
     props.onAddMeetup(meetupData);

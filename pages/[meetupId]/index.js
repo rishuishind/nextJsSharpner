@@ -1,5 +1,4 @@
-import Dummy_Meetups from '../../components/data/Dummy_Meetups';
-
+import MongoClient from "mongodb/lib/mongo_client";
 const showMeetup = (props) => {
 
     return <>
@@ -10,19 +9,27 @@ const showMeetup = (props) => {
 }
 export function getStaticPaths() {
     return {
-        fallback: false,
+        fallback: true,
         paths: [{ params: { meetupId: 'm1', } }, { params: { meetupId: 'm2' } }, { params: { meetupId: 'm3' } }]
     }
 }
-export function getStaticProps(context) {
+export async function getStaticProps(context) {
     const id = context.params.meetupId;
-    let data = Dummy_Meetups.find((list) => list.id === id)
-    if (!data) {
-        data = Dummy_Meetups[1];
-    }
+    const client = await MongoClient.connect('mongodb://rishuishind:saras123@ac-bqc4kzx-shard-00-00.mapsrxn.mongodb.net:27017,ac-bqc4kzx-shard-00-01.mapsrxn.mongodb.net:27017,ac-bqc4kzx-shard-00-02.mapsrxn.mongodb.net:27017/?ssl=true&replicaSet=atlas-1i7v8o-shard-0&authSource=admin&retryWrites=true&w=majority');
+    const db = client.db();
+    const meetupCollection = db.collection('meetups');
+    const meetups = await meetupCollection.find().toArray();
+    let data = meetups.find((list) => list._id.toString() === id)
+    console.log('this is data ', data);
+    client.close();
     return {
         props: {
-            data: data,
+            data: {
+                title: data.title,
+                image: data.image,
+                address: data.address,
+                id: data._id.toString()
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 import MeetupList from "../components/meetups/MeetupList";
-import Dummy_Meetups from '../components/data/Dummy_Meetups';
+import MongoClient from "mongodb/lib/mongo_client";
 
 const homePage = (props) => {
     return <>
@@ -8,9 +8,19 @@ const homePage = (props) => {
 }
 
 export async function getStaticProps() {
+    const client = await MongoClient.connect('mongodb://rishuishind:saras123@ac-bqc4kzx-shard-00-00.mapsrxn.mongodb.net:27017,ac-bqc4kzx-shard-00-01.mapsrxn.mongodb.net:27017,ac-bqc4kzx-shard-00-02.mapsrxn.mongodb.net:27017/?ssl=true&replicaSet=atlas-1i7v8o-shard-0&authSource=admin&retryWrites=true&w=majority');
+    const db = client.db();
+    const meetupCollection = db.collection('meetups');
+    const meetups = await meetupCollection.find().toArray();
+    client.close();
     return {
         props: {
-            meetup: Dummy_Meetups,
+            meetup: meetups.map((meetup) => ({
+                title: meetup.title,
+                image: meetup.image,
+                address: meetup.address,
+                id: meetup._id.toString()
+            }))
         },
         revalidate: 1
     }
