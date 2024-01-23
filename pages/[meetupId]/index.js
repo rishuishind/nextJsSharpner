@@ -7,10 +7,14 @@ const showMeetup = (props) => {
         <h4>{props.data.address}</h4>
     </>
 }
-export function getStaticPaths() {
+export async function getStaticPaths() {
+    const client = await MongoClient.connect('mongodb://rishuishind:saras123@ac-bqc4kzx-shard-00-00.mapsrxn.mongodb.net:27017,ac-bqc4kzx-shard-00-01.mapsrxn.mongodb.net:27017,ac-bqc4kzx-shard-00-02.mapsrxn.mongodb.net:27017/?ssl=true&replicaSet=atlas-1i7v8o-shard-0&authSource=admin&retryWrites=true&w=majority');
+    const db = client.db();
+    const meetupCollection = db.collection('meetups');
+    const meetups = await meetupCollection.find({}, { _id: 1 }).toArray();
     return {
-        fallback: true,
-        paths: [{ params: { meetupId: 'm1', } }, { params: { meetupId: 'm2' } }, { params: { meetupId: 'm3' } }]
+        fallback: false,
+        paths: meetups.map((meetup) => ({ params: { meetupId: meetup._id.toString() } }))
     }
 }
 export async function getStaticProps(context) {
