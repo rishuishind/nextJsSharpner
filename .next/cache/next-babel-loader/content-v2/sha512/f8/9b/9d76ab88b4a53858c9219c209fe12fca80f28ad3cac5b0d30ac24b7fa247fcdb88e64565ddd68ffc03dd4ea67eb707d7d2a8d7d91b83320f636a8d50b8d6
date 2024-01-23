@@ -1,0 +1,1 @@
+{"ast":null,"code":"const homePage = () => {};","map":{"version":3,"sources":["/home/rishabh/Desktop/Rishu/sharpner/nextJs/pages/index.js"],"names":["homePage"],"mappings":"AAAA,MAAMA,QAAQ,GAAG,MAAM,CAEtB,CAFD","sourcesContent":["const homePage = () => {\n\n}"]},"metadata":{},"sourceType":"script"}
